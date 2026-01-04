@@ -1,0 +1,15 @@
+/node_modules
+/vendor
+.env
+*.log
+
+# Model AI - JANGAN upload!
+*.keras
+*.h5
+*.pkl
+*.pt
+*.pth
+
+# Python
+__pycache__/
+venv/
