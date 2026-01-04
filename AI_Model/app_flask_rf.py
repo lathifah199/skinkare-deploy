@@ -196,4 +196,5 @@ def predict_rf():
 
 if __name__ == '__main__':
     print("🚀 Flask API SKINKARE aktif (mengacu PMK No. 2 Tahun 2020)")
-    app.run(debug=True, host='127.0.0.1', port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=True, host='0.0.0.0', port=port)
