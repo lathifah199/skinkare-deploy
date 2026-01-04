@@ -208,7 +208,7 @@ const checkPosisi = document.getElementById("checkPosisi");
 const checkJarak = document.getElementById("checkJarak");
 
 // ⚙️ CONFIG - Ganti URL ini sesuai server AI Anda
-const AI_SERVER_URL = "https://successful-charisma-production.up.railway.app";
+const AI_SERVER_URL = "{{ env('FLASK_APP_URL') }}";
 
 let stream = null;
 let tinggiTerakhir = null;
@@ -602,30 +602,23 @@ function simpanDanLanjut() {
     return;
   }
 
-  fetch("/scan_tinggi/{{ request()->route('id') }}/store", {
+  fetch("{{ route('scan_tinggi.store', ['id' => request()->route('id')]) }}", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-CSRF-TOKEN": "{{ csrf_token() }}"
     },
-    body: JSON.stringify({
-      tinggi_badan: tinggi
-    })
+    body: JSON.stringify({ tinggi_badan: tinggi })
   })
-  .then(r => {
-    if (!r.ok) throw new Error("HTTP error " + r.status);
-    return r.json();
-  })
+  .then(r => r.json())
   .then(data => {
     if (data.success) {
       window.location.href = data.redirect_url;
-    } else {
-      alert("Gagal menyimpan data");
     }
   })
   .catch(err => {
-    console.error(err);
     alert("Gagal menyimpan data");
+    console.error(err);
   });
 }
 

@@ -1,4 +1,13 @@
-@extends('layouts.app')
+@php
+    if (Auth::guard('orangtua')->check()) {
+        $layout = 'layouts.app';
+    } else {
+        $layout = 'layouts.app_nakes';
+    }
+@endphp
+
+@extends($layout)
+
 @section('content')
 <div class="min-h-[calc(100vh-160px)] bg-white px-4 py-6">
 
@@ -90,7 +99,7 @@
         <div class="flex flex-col sm:flex-row mt-10 gap-4 w-full justify-center">
             <a href="{{ route('barcode.show', $anak->id) }}"
                class="bg-[#ddb9e9] hover:bg-[#6bc6bf] text-white font-semibold p-3 rounded-full shadow text-center transition">
-                Download Barcode
+                Download QR Code
             </a>            
             <a href="{{ route('scan_tinggi', $anak->id) }}"
                class="bg-[#53AFA2] hover:bg-[#6bc6bf] text-white font-semibold p-3 rounded-full shadow text-center transition">

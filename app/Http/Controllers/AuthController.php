@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Orangtua;
 use App\Models\Nakes;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -101,7 +100,7 @@ class AuthController extends Controller
 
     // =================== PROSES REGISTRASI ====================
     public function registrasi(Request $request)
-    {   
+    {
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'email' => 'required|string|email|max:255|unique:orangtua',

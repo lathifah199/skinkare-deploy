@@ -25,8 +25,7 @@ class ScanController extends Controller
                 'file',
                 file_get_contents($file),
                 $file->getClientOriginalName()
-            )->timeout(30)->post('http://127.0.0.1:5000/predict');
-
+            )->timeout(30)->post(env('FLASK_APP_URL') . '/predict');
             if (!$response->ok()) {
                 Log::error("Flask predict error:", [$response->body()]);
                 return response()->json(['error' => 'Gagal memproses gambar'], 500);
@@ -92,14 +91,15 @@ class ScanController extends Controller
         try {
             $pemeriksaan = Pemeriksaan::findOrFail($id_pemeriksaan);
 
-            $pemeriksaan->berat_badan = $request->berat_badan; // Pakai cara ini
-            $pemeriksaan->save(); // Simpan
+            $pemeriksaan->update([
+                'berat_badan' => $request->berat_badan,
+            ]);
 
             Log::info('Berat tersimpan', [
                 'pemeriksaan_id' => $id_pemeriksaan,
                 'berat' => $request->berat_badan
             ]);
-        return redirect()->route('scan.hasil', $id_pemeriksaan)
+        return redirect()->route('scan.hasil', ['id' => $id_pemeriksaan])
                         ->with('success', 'Data berat berhasil disimpan!');
 
         } catch (\Exception $e) {
@@ -111,13 +111,12 @@ class ScanController extends Controller
 // ===================== HASIL DETEKSI (Random Forest) =====================
 public function hasil($id)
 {
-    
     $pemeriksaan = Pemeriksaan::findOrFail($id);
     $anak = $pemeriksaan->anak; // relasi ke tabel anaks
 
     try {
         // Kirim data ke Flask
-        $response = Http::timeout(60)->post('http://127.0.0.1:5001/predict_rf', [
+        $response = Http::timeout(60)->post(env('FLASK_RF_URL') . '/predict_rf', [
             'umur' => (float) $anak->umur,
             'tinggi_badan' => (float) $pemeriksaan->tinggi_badan,
             'berat_badan' => (float) $pemeriksaan->berat_badan,
